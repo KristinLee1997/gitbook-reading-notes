@@ -55,3 +55,46 @@ public void getSum(){
 
 ## 第6条 消除过期的对象引用
 
+过期引用是指永远不会被解除的引用,消除过期的对象引用可以防止内存泄漏 
+
+```text
+public class Stack{ 
+    private Object[] elements; 
+    private int size = 0; 
+    private static final int DEFAULT_INITIAL_CAPACITY = 16;
+
+    public Stack(){
+        elements = new Object[DEFAULT_INITIAL_CAPACITY];
+    }
+
+    public void push(Object e){
+        ensureCapacity();
+        elements[size++] = e;
+    }
+    
+    public Object pop(){
+        if(size = 0){
+            throw new EmptyStackException();
+        }
+        return elements[--size];  // 这里会发生内存泄漏,改进方法如下
+        /*
+        Object result = elements[--size];
+        elements[size] = null;
+        return result;
+        */
+    }
+    
+    private void ensureCapacity(){
+        if(elements.length = size){
+            elements = Arrays.copyOf(elements, 2 * size + 1);
+        }
+    }
+}
+```
+
+内存泄露的一个常见来源就是缓存,如果只要在缓存之外存在对某个项的键的引用,该项就有意义,那么就可以用WeakHashMap代表缓存,当缓存中的项过期之后,它们就会自动被删除
+
+## 第7条 避免使用finalize\(\)
+
+这一条不是很懂... 使用finalize\(\)是记得调用super.finalize\(\),防止父类永远无法调用finalize\(\)
+
